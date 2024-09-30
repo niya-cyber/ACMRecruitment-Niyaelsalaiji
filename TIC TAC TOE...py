@@ -1,58 +1,63 @@
 import random
+moves=[]
+compcanselect=[]
+board = [' ' for _ in range(9)]
 
-def print_board(board):
-  for row in board:
-    print(" | ".join(row))
-    print("-" * 9)
+def showboard():
+    row1 = '| {} | {} | {} |'.format(board[0], board[1], board[2])
+    row2 = '| {} | {} | {} |'.format(board[3], board[4], board[5])
+    row3 = '| {} | {} | {} |'.format(board[6], board[7], board[8])
 
-def check_win(board, player):
-  for row in board:
-    if all(cell == player for cell in row):
-      return True
-  for col in range(3):
-    if all(board[row][col] == player for row in range(3)):
-      return True
-  if board[0][0] == board[1][1] == board[2][2] == player:
-    return True
-  if board[0][2] == board[1][1] == board[2][0] == player:
-    return True
-  return False
+    print()
+    print(row1)
+    print(row2)
+    print(row3)
+    print()
 
-def play_game():
-  """Plays a tic-tac-toe game."""
-  board = [[" ", " ", " "], [" ", " ", " "], [" ", " ", " "]]
-  current_player = "X"
+def player(icon):
+    if icon == 'X':
+        text="Your"
+    elif icon == 'O':
+        text="Computers"
 
-  while True:
-    print_board(board)
+    print("{} turn".format(text))
 
-    if current_player == "X":
-      row = int(input("Enter row (0-2): "))
-      col = int(input("Enter column (0-2): "))
-      if board[row][col] != " ":
-        print("Invalid move. Cell already occupied.")
-        continue
+    if icon=="X":
+        choice = int(input("Enter your move (1-9): ").strip())
+        if choice>=10 or choice<=0:
+            print("Out of index please select valid position")
+            choice = int(input("Enter your move (1-9): ").strip())
+        moves.append(choice)
+        if board[choice - 1] == ' ':
+            board[choice - 1] = icon
+        else:
+            print("Sorry already occupied please choose another move")
     else:
-      # Computer's random move
-      while True:
-        row = random.randint(0, 2)
-        col = random.randint(0, 2)
-        if board[row][col] == " ":
-          break
+        for i in range(1, 10):
+           if i not in moves:
+             compcanselect.append(i)
+        choice=random.choice(compcanselect)
+        if board[choice - 1] == ' ':
+            board[choice - 1] = icon   
 
-    board[row][col] = current_player
+def wins(icon):
+    if (board[0] == icon and board[1] == icon and board[2] == icon) or (board[3] == icon and board[4] == icon and board[5] == icon) or (board[6] == icon and board[7] == icon and board[8] == icon) or  (board[0] == icon and board[3] == icon and board[6] == icon) or (board[1] == icon and board[4] == icon and board[7] == icon) or (board[2] == icon and board[5] == icon and board[8] == icon) or (board[0] == icon and board[4] == icon and board[8] == icon) or (board[2] == icon and board[4] == icon and board[6] == icon):
+        return True
+    else:
+        return False
 
-    if check_win(board, current_player):
-      print_board(board)
-      print(f"{current_player} wins!")
-      break
-
-    if all(all(cell != " " for cell in row) for row in board):
-      print_board(board)
-      print("It's a tie!")
-      break
-
-    current_player = "O" if current_player == "X" else "X"
-
-if __name__ == "__main__":
-  play_game()
+while True:
+    showboard()
+    player('X')
+    showboard()
+    if wins('X'):
+        print("You wins! Congratulations!")
+        break
+    elif ' ' not in board:
+        print("It's a tie")
+        break
+    player('O')
+    if wins('O'):
+        print()
+        print("Computer wins.Better luck next time!")
+        break
